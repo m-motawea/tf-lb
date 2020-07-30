@@ -1,0 +1,5 @@
+bottle
+redis
+gunicorn
+jinja2
+python-daemon
