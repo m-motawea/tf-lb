@@ -2,7 +2,7 @@ import jinja2
 from lib.nginx import Upstream, Server
 import time
 import os
-import daemon
+import redis
 
 templateLoader = jinja2.FileSystemLoader(searchpath="/services/lib/templates")
 # templateLoader = jinja2.FileSystemLoader(searchpath="/home/maged/Code/tf-loadbalancer/services/lib/templates")
@@ -35,14 +35,25 @@ def update_servers():
         f.write(output)
 
 def daemon_loop():
+    config_version = 0
     while True:
-        update_upstreams()
-        update_servers()
-        os.system("service nginx reload")
-        time.sleep(100)
+        try:
+            cl = redis.Redis(
+                host=os.environ.get("REDIS_IP_ADDRESS", "127.0.0.1"),
+                port=int(os.environ.get("REDIS_PORT", 6379)),
+            )
+            current_version = cl.get("CONFIG_VERSION")
+            if current_version and int(current_version.decode()) > config_version:
+                update_upstreams()
+                update_servers()
+                res = os.system("service nginx reload")
+                if res == 0:
+                    config_version = int(current_version.decode())
+        except Exception as e:
+            print(e)
+        time.sleep(10)
 
 
 
 if __name__ == "__main__":
-    with daemon.DaemonContext():
-        daemon_loop()
+    daemon_loop()

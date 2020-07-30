@@ -5,9 +5,11 @@ class Upstream(SetConfigBase):
     def __init__(self, name):
         name = f"UPSTREAM:{name}"
         super().__init__(name)
+        self.increment = False
 
     def add_server(self, server_ip, server_port, server_weight=100):
         self.members.append(f"{server_ip}:{server_port} weight={server_weight}")
+        self.increment = True
     
     def remove_server(self, server_ip, server_port, server_weight=100):
         server_cfg = f"{server_ip}:{server_port} weight={server_weight}"
@@ -20,6 +22,9 @@ class Upstream(SetConfigBase):
     def save(self):
         super().save()
         self.redis.sadd("UPSTREAMS", self.key)
+        if self.increment:
+            self.redis.incr("CONFIG_VERSION")
+
 
     @classmethod
     def list_upstreams(cls):
@@ -54,6 +59,7 @@ class Server:
         self.redis.set(self.key, self.upstream_name)
         self.redis.sadd("SERVERS", self.key)
         self.redis.sadd("BOUND_UPSTREAMS", self.upstream_name)
+        self.redis.incr("CONFIG_VERSION")
 
     @classmethod
     def list_servers(cls):
