@@ -8,7 +8,7 @@ chmod 600 ~/.ssh
 chmod 600 /etc/ssh/*
 touch ~/.ssh/authorized_keys
 chmod 600 ~/.ssh/authorized_keys
-echo $pub_key >> ~/.ssh/authorized_keys
+echo $SSH_KEY >> ~/.ssh/authorized_keys
 chmod 600 ~/.ssh/authorized_keys
 service ssh restart
 touch /etc/nginx/upstreams.conf
@@ -17,10 +17,12 @@ touch /etc/nginx/servers.conf
 redis-server --daemonize yes
 ### 
 openssl req -nodes -x509 -newkey rsa:4096 -keyout /etc/nginx/key.pem -out /etc/nginx/cert.pem -days 365 -subj '/CN=localhost'
-service nginx restart
 cd /services
 chmod +x /trc
-python3 /services/lbd.py &
+chmod +x /failover.sh
+
 python3 /services/clusterd.py &
-service keepalived restart
+python3 /services/lbd.py &
+service nginx restart
+
 python3 /services/app.py

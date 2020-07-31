@@ -18,13 +18,15 @@ def update_peers():
     except ConfigNotExist:
         cfg = KeepAlivedPeers()
     peer_ips = cfg.list_peers()
+    if node_ip in peer_ips:
+        peer_ips.remove(node_ip)
     node_state = os.environ.get("KEEPALIVED_STATE", "MASTER")
     template = templateEnv.get_template("keepalived.conf")
     output = template.render(node_state=node_state, peer_ips=peer_ips, node_ip=node_ip)
     with open("/etc/keepalived/keepalived.conf", "w") as f:
         f.write(output)
 
-def process_loop(self):
+def process_loop():
     cluster_version = 0
     while True:
         try:
@@ -35,6 +37,12 @@ def process_loop(self):
             current_version = cl.get("CLUSTER_VERSION")
             if current_version and int(current_version.decode()) > cluster_version:
                 update_peers()
+                res = os.system("pidof keepalived")
+                if res != 0:
+                    res = os.system("keepalived start -P -l -n -x &")
+                else:
+                    os.system("pkill -9 keepalived")
+                    res = os.system("keepalived start -P -l -n -x &")
                 res = os.system("service keepalived reload")
                 if res == 0:
                     cluster_version = int(current_version.decode())
@@ -45,5 +53,6 @@ def process_loop(self):
 
 if __name__ == "__main__":
     update_peers()
+    process_loop()
 
     
