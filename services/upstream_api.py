@@ -116,3 +116,37 @@ def add_backend(upstream_name, body):
         status=201,
         headers={"Content-Type": "application/json"}
     )
+
+@post("/lb-config/upstreams/<upstream_name>/delete")
+@json_body_validation
+def delete_backend(upstream_name, body):
+    """
+    body: dst_ip, dst_port, weight
+    """
+    for key in ["dst_ip", "dst_port"]:
+        if key not in body:
+            return HTTPResponse(
+                json.dumps({"error": f"missing key `{key}` in body"}),
+                status=400,
+                headers={"Content-Type": "application/json"}
+            )
+    try:
+        u = Upstream.get(upstream_name)
+    except ConfigNotExist:
+        if upstream_name in Upstream.list_upstreams():
+            u = Upstream(upstream_name)
+        else:
+            return HTTPResponse(
+                json.dumps({"error": f"upstream {upstream_name} doesn't exist"}),
+                status=404,
+                headers={"Content-Type": "application/json"}
+            )
+    u.remove_server(body["dst_ip"], body["dst_port"], body.get("weight", 100))
+    u.save()
+
+    return HTTPResponse(
+        json.dumps({"success": True}),
+        status=204,
+        headers={"Content-Type": "application/json"}
+    )
+

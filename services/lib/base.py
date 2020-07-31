@@ -44,6 +44,8 @@ class SetConfigBase:
     def save(self):
         if self.members:
             self.redis.sadd(self.key, *self.members)
+        else:
+            self.redis.delete(self.key)
 
     @classmethod
     def get(cls, key):
