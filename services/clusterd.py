@@ -41,8 +41,7 @@ def process_loop():
                 if res != 0:
                     res = os.system("keepalived start -P -l -n -x &")
                 else:
-                    os.system("pkill -9 keepalived")
-                    res = os.system("keepalived start -P -l -n -x &")
+                    os.system("pkill -HUP keepalived")
                 res = os.system("service keepalived reload")
                 if res == 0:
                     cluster_version = int(current_version.decode())
