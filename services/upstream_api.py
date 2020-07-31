@@ -1,7 +1,7 @@
 import json
-from lib.nginx import Upstream
+from lib.nginx import Upstream, ResourceInUse
 from lib.base import ConfigNotExist
-from bottle import post, HTTPResponse, get
+from bottle import post, HTTPResponse, get, delete
 from decorators import json_body_validation
 
 # TODO: add delete and update apis
@@ -37,6 +37,31 @@ def add_upstream(body):
         status=201,
         headers={"Content-Type": "application/json"}
     )
+
+@delete("/lb-config/upstreams/<upstream_name>")
+def delete_upstream(upstream_name):
+    try:
+        u = Upstream.get(upstream_name)
+    except ConfigNotExist:
+        return HTTPResponse(
+                json.dumps({"error": f"upstream {upstream_name} doesn't exist"}),
+                status=404,
+                headers={"Content-Type": "application/json"}
+            )
+    try:
+        u.delete()
+    except ResourceInUse:
+        return HTTPResponse(
+                json.dumps({"error": f"upstream {upstream_name} is bound to a server. please delete the server first"}),
+                status=400,
+                headers={"Content-Type": "application/json"}
+            )
+    return HTTPResponse(
+        json.dumps({"success": True}),
+        status=204,
+        headers={"Content-Type": "application/json"}
+    )
+
 
 @get("/lb-config/upstreams/<upstream_name>")
 def list_backends(upstream_name):

@@ -1,6 +1,9 @@
 from .base import SetConfigBase, ConfigNotExist
 import redis, os
 
+class ResourceInUse(Exception):
+    pass
+
 class Upstream(SetConfigBase):
     def __init__(self, name):
         name = f"UPSTREAM:{name}"
@@ -24,6 +27,13 @@ class Upstream(SetConfigBase):
         self.redis.sadd("UPSTREAMS", self.key)
         if self.increment:
             self.redis.incr("CONFIG_VERSION")
+
+    def delete(self):
+        if self.redis.sismember("BOUND_UPSTREAMS", self.key[len("UPSTREAM:"):]):
+            raise ResourceInUse(f"upstream {self.key[len('UPSTREAM:'):]} is being used by a server. please delete the server first")
+        self.redis.srem("UPSTREAMS", self.key)
+        super().delete()
+        self.redis.incr("CONFIG_VERSION")
 
 
     @classmethod
@@ -79,4 +89,10 @@ class Server:
         obj = cls(name)
         obj.load()
         return obj
+    
+    def delete(self):
+        self.redis.srem("SERVERS", self.key)
+        self.redis.srem("BOUND_UPSTREAMS", self.upstream_name)
+        self.redis.delete(self.key)
+        self.redis.incr("CONFIG_VERSION")
         

@@ -50,3 +50,6 @@ class SetConfigBase:
         obj = cls(key)
         obj.load()
         return obj
+
+    def delete(self):
+        self.redis.delete(self.key)

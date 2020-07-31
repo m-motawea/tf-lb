@@ -1,7 +1,7 @@
 import json
 from lib.nginx import Server
 from lib.base import ConfigNotExist
-from bottle import post, HTTPResponse, get
+from bottle import post, HTTPResponse, get, delete
 from decorators import json_body_validation
 
 
@@ -52,3 +52,20 @@ def get_server(server_name):
             status=200,
             headers={"Content-Type": "application/json"}
         )
+
+@delete("/lb-config/servers/<server_name>")
+def delete_server(server_name):
+    try:
+        s = Server.get(server_name)
+    except ConfigNotExist:
+        return HTTPResponse(
+            json.dumps({"error": f"server {server_name} does not exist"}),
+            status=404,
+            headers={"Content-Type": "application/json"}
+        )
+    s.delete()
+    return HTTPResponse(
+        json.dumps({"success": True}),
+        status=204,
+        headers={"Content-Type": "application/json"}
+    )
