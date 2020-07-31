@@ -19,5 +19,8 @@ redis-server --daemonize yes
 openssl req -nodes -x509 -newkey rsa:4096 -keyout /etc/nginx/key.pem -out /etc/nginx/cert.pem -days 365 -subj '/CN=localhost'
 service nginx restart
 cd /services
+chmod +x /trc
 python3 /services/lbd.py &
+python3 /services/clusterd.py &
+service keepalived restart
 python3 /services/app.py

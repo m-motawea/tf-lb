@@ -21,8 +21,6 @@ def update_upstreams():
     with open("/etc/nginx/upstreams.conf", "w") as f:
         f.write(output)
 
-
-
 def update_servers():
     all_servers = Server.list_servers()
     render_servers = []

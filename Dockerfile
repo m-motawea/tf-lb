@@ -10,5 +10,6 @@ RUN pip3 install -r /services/requirements.txt
 COPY start.sh /start.sh
 COPY services/lib/templates/nginx.conf /etc/nginx/nginx.conf
 COPY failover.sh /failover.sh
+COPY trc /trc
 RUN chmod +x /start.sh
 ENTRYPOINT ["/bin/bash", "/start.sh"]
