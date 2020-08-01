@@ -38,7 +38,7 @@ def add_upstream(name, signing_key=None, address=None):
         "Signature": signature.decode(),
         "Content-Type": "application/json"
     }
-    res = requests.post(f"https://{address}/lb-config/upstreams", json.dumps(body), headers=headers)
+    res = requests.post(f"https://{address}/lb-config/upstreams", json.dumps(body), headers=headers, verify=False)
     print(res.text)
     return res.status_code == 201
 
@@ -61,7 +61,7 @@ def delete_upstream(name, signing_key=None, address=None):
         "Signature": signature.decode(),
         "Content-Type": "application/json"
     }
-    res = requests.delete(f"https://{address}/lb-config/upstreams/{name}", headers=headers)
+    res = requests.delete(f"https://{address}/lb-config/upstreams/{name}", headers=headers, verify=False)
     if res.status_code == 204:
         print(f"upstream {name} deleted")
     return res.status_code == 204
@@ -77,7 +77,7 @@ def list_upstreams(address=None):
     headers = {
         "Content-Type": "application/json"
     }
-    res = requests.get(f"https://{address}/lb-config/upstreams", headers=headers)
+    res = requests.get(f"https://{address}/lb-config/upstreams", headers=headers, verify=False)
     print(res.text)
     return res.status_code == 200
 
@@ -93,7 +93,7 @@ def list_backends(name, address=None):
     headers = {
         "Content-Type": "application/json"
     }
-    res = requests.get(f"https://{address}/lb-config/upstreams/{name}", headers=headers)
+    res = requests.get(f"https://{address}/lb-config/upstreams/{name}", headers=headers, verify=False)
     print(res.text)
     return res.status_code == 200
 
@@ -120,7 +120,7 @@ def add_backend(name, dst_ip, dst_port, weight=100, signing_key=None, address=No
         "Signature": signature.decode(),
         "Content-Type": "application/json"
     }
-    res = requests.post(f"https://{address}/lb-config/upstreams/{name}", json.dumps(body), headers=headers)
+    res = requests.post(f"https://{address}/lb-config/upstreams/{name}", json.dumps(body), headers=headers, verify=False)
     print(res.text)
     return res.status_code == 201
 
@@ -147,7 +147,7 @@ def delete_backend(name, dst_ip, dst_port, weight=100, signing_key=None, address
         "Signature": signature.decode(),
         "Content-Type": "application/json"
     }
-    res = requests.post(f"https://{address}/lb-config/upstreams/{name}/delete", json.dumps(body), headers=headers)
+    res = requests.post(f"https://{address}/lb-config/upstreams/{name}/delete", json.dumps(body), headers=headers, verify=False)
     if res.status_code == 204:
         print(f"backend {dst_ip}:{dst_port} weight: {weight} deleted successfully")
     if res.status_code == 404:
@@ -175,7 +175,7 @@ def add_server(name, upstream, signing_key=None, address=None):
         "Signature": signature.decode(),
         "Content-Type": "application/json"
     }
-    res = requests.post(f"https://{address}/lb-config/servers", json.dumps(body), headers=headers)
+    res = requests.post(f"https://{address}/lb-config/servers", json.dumps(body), headers=headers, verify=False)
     print(res.text)
     return res.status_code == 201
 
@@ -198,7 +198,7 @@ def delete_server(name, signing_key=None, address=None):
         "Signature": signature.decode(),
         "Content-Type": "application/json"
     }
-    res = requests.delete(f"https://{address}/lb-config/servers/{name}", headers=headers)
+    res = requests.delete(f"https://{address}/lb-config/servers/{name}", headers=headers, verify=False)
     if res.status_code == 204:
         print(f"server {name} deleted")
     return res.status_code == 204
@@ -214,7 +214,7 @@ def list_peers(address=None):
     headers = {
         "Content-Type": "application/json"
     }
-    res = requests.get(f"https://{address}/lb-config/cluster/nodes", headers=headers)
+    res = requests.get(f"https://{address}/lb-config/cluster/nodes", headers=headers, verify=False)
     print(res.text)
     return res.status_code == 200
 
