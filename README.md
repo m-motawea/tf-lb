@@ -23,4 +23,4 @@ this solution depends on redis to store nginx and keepalived config and discover
 
 5- /services/clusterd.py: listens for keepalived peers changes on redis and updates keepalived config.
 
-5- trc: started and stopped by keepalived failover script /failover.sh.
+6- trc: started and stopped by keepalived failover script /failover.sh.
