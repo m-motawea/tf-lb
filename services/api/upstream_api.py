@@ -2,7 +2,7 @@ import json
 from lib.nginx import Upstream, ResourceInUse
 from lib.base import ConfigNotExist
 from bottle import post, HTTPResponse, get, delete
-from api.decorators import json_body_validation
+from api.decorators import json_body_validation, verify_body_signature, verify_resource_signature
 
 @get("/lb-config/upstreams")
 def list_upstreams():
@@ -16,6 +16,7 @@ def list_upstreams():
 
 @post("/lb-config/upstreams")
 @json_body_validation
+@verify_body_signature
 def add_upstream(body):
     """
     body: name
@@ -36,6 +37,7 @@ def add_upstream(body):
     )
 
 @delete("/lb-config/upstreams/<upstream_name>")
+@verify_resource_signature
 def delete_upstream(upstream_name):
     try:
         u = Upstream.get(upstream_name)
@@ -83,6 +85,7 @@ def list_backends(upstream_name):
 
 @post("/lb-config/upstreams/<upstream_name>")
 @json_body_validation
+@verify_body_signature
 def add_backend(upstream_name, body):
     """
     body: dst_ip, dst_port, weight
@@ -116,6 +119,7 @@ def add_backend(upstream_name, body):
 
 @post("/lb-config/upstreams/<upstream_name>/delete")
 @json_body_validation
+@verify_body_signature
 def delete_backend(upstream_name, body):
     """
     body: dst_ip, dst_port, weight
@@ -135,6 +139,13 @@ def delete_backend(upstream_name, body):
         else:
             return HTTPResponse(
                 json.dumps({"error": f"upstream {upstream_name} doesn't exist"}),
+                status=404,
+                headers={"Content-Type": "application/json"}
+            )
+    backend_str = f"{body['dst_ip']}:{body['dst_port']} weight={body.get('weight', 100)}"
+    if not backend_str in u.list_servers():
+        return HTTPResponse(
+                json.dumps({"error": f"backend {backend_str} doesn't exist"}),
                 status=404,
                 headers={"Content-Type": "application/json"}
             )

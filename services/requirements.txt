@@ -3,3 +3,5 @@ redis
 gunicorn
 jinja2
 netifaces
+pynacl
+click

@@ -43,6 +43,14 @@ class SetConfigBase:
 
     def save(self):
         if self.members:
+            old_members = self.redis.smembers(self.key)
+            if old_members:
+                old_members = [m.decode() for m in old_members]
+            to_remove = []
+            for m in old_members:
+                if m not in self.members:
+                    to_remove.append(m)
+            self.redis.srem(self.key, *to_remove)
             self.redis.sadd(self.key, *self.members)
         else:
             self.redis.delete(self.key)

@@ -2,7 +2,7 @@ import json
 from lib.nginx import Server
 from lib.base import ConfigNotExist
 from bottle import post, HTTPResponse, get, delete
-from api.decorators import json_body_validation
+from api.decorators import json_body_validation, verify_resource_signature, verify_body_signature
 
 
 @get("/lb-config/servers")
@@ -17,6 +17,7 @@ def list_servers():
 
 @post("/lb-config/servers")
 @json_body_validation
+@verify_body_signature
 def add_server(body):
     """
     body: name
@@ -54,6 +55,7 @@ def get_server(server_name):
         )
 
 @delete("/lb-config/servers/<server_name>")
+@verify_resource_signature
 def delete_server(server_name):
     try:
         s = Server.get(server_name)

@@ -1,14 +1,18 @@
 import json
+from lib.base import ConfigNotExist
 from lib.keepalived import KeepAlivedPeers
-from bottle import post, HTTPResponse, get, delete
-from api.decorators import json_body_validation
+from bottle import HTTPResponse, get
 
 
 @get("/lb-config/cluster/nodes")
 def list_nodes():
-    cfg = KeepAlivedPeers.get()
+    try:
+        cfg = KeepAlivedPeers.get()
+        peers = cfg.list_peers()
+    except ConfigNotExist:
+        peers = []
     return HTTPResponse(
-        json.dumps({"peers": cfg.list_peers()}),
+        json.dumps({"peers": peers}),
         status=200,
         headers={"Content-Type": "application/json"}
     )
