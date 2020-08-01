@@ -10,3 +10,10 @@ check example.sh
 
 ### Dependencies:
 this solution depends on redis to store nginx and keepalived config and discover cluster nodes.
+
+### Maain Processes:
+1- Nginx
+2- Keepalived
+3- /services/app.py: provides apis to configure nginx.
+4- /services/lbd.py: listens for nginx config changes on redis and updates nginx config.
+5- /services/clusterd.py: listens for keepalived peers changes on redis and updates keepalived config.
