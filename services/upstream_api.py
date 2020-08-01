@@ -4,9 +4,6 @@ from lib.base import ConfigNotExist
 from bottle import post, HTTPResponse, get, delete
 from decorators import json_body_validation
 
-# TODO: add delete and update apis
-__all__ = ["list_upstreams", "add_upstream", "list_backends", "add_backend"]
-
 @get("/lb-config/upstreams")
 def list_upstreams():
     upstreams = Upstream.list_upstreams()
