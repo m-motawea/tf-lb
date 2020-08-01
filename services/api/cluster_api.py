@@ -1,7 +1,7 @@
 import json
 from lib.keepalived import KeepAlivedPeers
 from bottle import post, HTTPResponse, get, delete
-from decorators import json_body_validation
+from api.decorators import json_body_validation
 
 
 @get("/lb-config/cluster/nodes")

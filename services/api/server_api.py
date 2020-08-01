@@ -2,7 +2,7 @@ import json
 from lib.nginx import Server
 from lib.base import ConfigNotExist
 from bottle import post, HTTPResponse, get, delete
-from decorators import json_body_validation
+from api.decorators import json_body_validation
 
 
 @get("/lb-config/servers")
