@@ -30,3 +30,5 @@ this solution depends on redis to store nginx and keepalived config and discover
 1- Authenticate config requests
 
 2- Provide facilities for configuring ssl certificates
+
+3- add relative backend weights for each cluster node
