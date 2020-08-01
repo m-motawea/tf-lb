@@ -155,6 +155,21 @@ def delete_backend(name, dst_ip, dst_port, weight=100, signing_key=None, address
     return res.status_code == 204
 
 
+@cli.command(help="list all servers")
+@click.option(
+    '--address',
+    help='ip address of your lb',
+)
+def list_server(address=None):
+    address = address or "localhost"
+    headers = {
+        "Content-Type": "application/json"
+    }
+    res = requests.get(f"https://{address}/lb-config/servers", headers=headers, verify=False)
+    print(res.text)
+    return res.status_code == 200
+
+
 @cli.command(help="create a new nginx server construct")
 @click.argument('name')
 @click.argument('upstream')
