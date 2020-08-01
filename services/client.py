@@ -19,7 +19,7 @@ def sign_message(signing_key, message):
     return signing_key.sign(message, encoder=HexEncoder)
 
 
-@cli.command()
+@cli.command(help="create a new upstream")
 @click.argument('name')
 @click.option(
     '--signing-key',
@@ -43,7 +43,7 @@ def add_upstream(name, signing_key=None, address=None):
     return res.status_code == 201
 
 
-@cli.command()
+@cli.command(help="delete upstream")
 @click.argument('name')
 @click.option(
     '--signing-key',
@@ -67,7 +67,7 @@ def delete_upstream(name, signing_key=None, address=None):
     return res.status_code == 204
 
 
-@cli.command()
+@cli.command(help="list all upstreams")
 @click.option(
     '--address',
     help='ip address of your lb',
@@ -82,7 +82,7 @@ def list_upstreams(address=None):
     return res.status_code == 200
 
 
-@cli.command()
+@cli.command(help="list backends of the specified upstream")
 @click.argument('name')
 @click.option(
     '--address',
@@ -98,7 +98,7 @@ def list_backends(name, address=None):
     return res.status_code == 200
 
 
-@cli.command()
+@cli.command(help="add backend to the specified upstream")
 @click.argument('name')
 @click.argument('dst_ip')
 @click.argument('dst_port')
@@ -125,7 +125,7 @@ def add_backend(name, dst_ip, dst_port, weight=100, signing_key=None, address=No
     return res.status_code == 201
 
 
-@cli.command()
+@cli.command(help="delete the specified backend from upstream")
 @click.argument('name')
 @click.argument('dst_ip')
 @click.argument('dst_port')
@@ -155,7 +155,7 @@ def delete_backend(name, dst_ip, dst_port, weight=100, signing_key=None, address
     return res.status_code == 204
 
 
-@cli.command()
+@cli.command(help="create a new nginx server construct")
 @click.argument('name')
 @click.argument('upstream')
 @click.option(
@@ -180,7 +180,7 @@ def add_server(name, upstream, signing_key=None, address=None):
     return res.status_code == 201
 
 
-@cli.command()
+@cli.command(help="delete the specified nginx server")
 @click.argument('name')
 @click.option(
     '--signing-key',
@@ -204,7 +204,7 @@ def delete_server(name, signing_key=None, address=None):
     return res.status_code == 204
 
 
-@cli.command()
+@cli.command(help="list keepalived configured peers")
 @click.option(
     '--address',
     help='ip address of your lb',
