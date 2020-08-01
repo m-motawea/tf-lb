@@ -12,7 +12,7 @@ check example.sh
 ### Dependencies:
 this solution depends on redis to store nginx and keepalived config and discover cluster nodes.
 
-### Maain Processes:
+### Main Processes:
 1- Nginx
 
 2- Keepalived
@@ -24,3 +24,9 @@ this solution depends on redis to store nginx and keepalived config and discover
 5- /services/clusterd.py: listens for keepalived peers changes on redis and updates keepalived config.
 
 6- trc: started and stopped by keepalived failover script /failover.sh.
+
+
+### TODO:
+1- Authenticate config requests
+
+2- Provide facilities for configuring ssl certificates
