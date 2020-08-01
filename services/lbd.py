@@ -5,7 +5,6 @@ import os
 import redis
 
 templateLoader = jinja2.FileSystemLoader(searchpath="/services/lib/templates")
-# templateLoader = jinja2.FileSystemLoader(searchpath="/home/maged/Code/tf-loadbalancer/services/lib/templates")
 templateEnv = jinja2.Environment(loader=templateLoader)
 
 def update_upstreams():

@@ -7,7 +7,6 @@ import jinja2
 import netifaces as ni
 
 templateLoader = jinja2.FileSystemLoader(searchpath="/services/lib/templates")
-# templateLoader = jinja2.FileSystemLoader(searchpath="/home/maged/Code/tf-loadbalancer/services/lib/templates")
 templateEnv = jinja2.Environment(loader=templateLoader)
 
 def update_peers():
@@ -20,7 +19,10 @@ def update_peers():
     peer_ips = cfg.list_peers()
     if node_ip in peer_ips:
         peer_ips.remove(node_ip)
-    node_state = os.environ.get("KEEPALIVED_STATE", "MASTER")
+    else:
+        cfg.add_peer(node_ip)
+        cfg.save()
+    node_state = os.environ.get("KEEPALIVED_STATE", "BACKUP")
     template = templateEnv.get_template("keepalived.conf")
     output = template.render(node_state=node_state, peer_ips=peer_ips, node_ip=node_ip)
     with open("/etc/keepalived/keepalived.conf", "w") as f:

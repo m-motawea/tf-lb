@@ -1,4 +1,5 @@
 from .base import SetConfigBase
+import copy
 
 
 class KeepAlivedPeers(SetConfigBase):
@@ -13,7 +14,7 @@ class KeepAlivedPeers(SetConfigBase):
             self.members.remove(peer_ip)
 
     def list_peers(self):
-        return self.members
+        return copy.copy(self.members)
 
     def save(self):
         super().save()
